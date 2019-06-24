@@ -75,6 +75,11 @@ class AngularCsrfValidationListener
         }
 
         $value = $event->getRequest()->headers->get($this->headerName);
+
+        if (null === $value) {
+            $value = $event->getRequest()->cookies->get($this->headerName);
+        }
+
         if (!$value || !$this->angularCsrfTokenManager->isTokenValid($value)) {
             throw new AccessDeniedHttpException('Bad CSRF token.');
         }
