@@ -95,6 +95,17 @@ class AngularCsrfCookieListener
         ) {
             return;
         }
+
+        $referer = parse_url($event->getRequest()->headers->get('referer'));
+
+        if (isset($referer['host'])) {
+            if (substr_count($referer['host'], '.') >= 2 ) {
+                $this->cookieDomain = substr($referer['host'], strpos($referer['host'], '.'));
+            } else {
+                $this->cookieDomain = '.'.$referer['host'];
+            }
+        }
+
         $event->getResponse()->headers->setCookie(new Cookie(
             $this->cookieName,
             $this->angularCsrfTokenManager->getToken()->getValue(),
